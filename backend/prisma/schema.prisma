@@ -1,0 +1,129 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mongodb"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+// Modelos de Autenticação e Usuários
+model User {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  email    String @unique
+  password String
+  role     Role   @default(MEMBER)
+
+  memberId String? @unique @db.ObjectId
+  member   Member? @relation(fields: [memberId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Role {
+  ADMIN
+  LEADER
+  MEMBER
+}
+
+// Modelo principal para Pessoas/Membros
+model Member {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  user      User?
+  name      String
+  birthDate DateTime
+  phone     String?
+  address   String?
+  baptized  Boolean  @default(false)
+
+  // Relacionamentos explícitos
+  groups      MembersOnGroups[]
+  classes     ClassAssignment[]
+  attendances Attendance[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Modelo para Grupos e Ministérios
+model Group {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+
+  members MembersOnGroups[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Modelo de ligação explícito para Membros e Grupos
+model MembersOnGroups {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  member  Member @relation(fields: [memberId], references: [id])
+  memberId String @db.ObjectId
+  group   Group  @relation(fields: [groupId], references: [id])
+  groupId  String @db.ObjectId
+
+  assignedAt DateTime @default(now())
+
+  @@unique([memberId, groupId])
+}
+
+// Modelos para Escola Bíblica Dominical
+model BiblicalSchoolClass {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+
+  participants ClassAssignment[]
+  attendances  Attendance[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Modelo de ligação explícito para Membros e Turmas
+model ClassAssignment {
+  id     String    @id @default(auto()) @map("_id") @db.ObjectId
+  role   ClassRole
+  member Member    @relation(fields: [memberId], references: [id])
+  memberId String    @db.ObjectId
+  class  BiblicalSchoolClass @relation(fields: [classId], references: [id])
+  classId String    @db.ObjectId
+
+  assignedAt DateTime @default(now())
+
+  @@unique([memberId, classId])
+}
+
+enum ClassRole {
+  TEACHER
+  STUDENT
+}
+
+model Attendance {
+  id     String           @id @default(auto()) @map("_id") @db.ObjectId
+  date   DateTime
+  status AttendanceStatus
+
+  studentId String @db.ObjectId
+  student   Member @relation(fields: [studentId], references: [id])
+  classId   String @db.ObjectId
+  class     BiblicalSchoolClass @relation(fields: [classId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([date, studentId, classId])
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+}
