@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -48,7 +48,7 @@ export default function GroupDetailPage() {
   const router = useRouter();
   const [group, setGroup] = useState<GroupDetail | null>(null);
 
-  const fetchGroup = async () => {
+  const fetchGroup = useCallback(async () => {
     if (!id) return;
     try {
       const response = await axios.get(`${API_URL}/groups/${id}`);
@@ -57,11 +57,11 @@ export default function GroupDetailPage() {
       console.error('Failed to fetch group:', error);
       router.push('/groups'); // Redireciona se o grupo não for encontrado
     }
-  };
+  }, [id, router]);
 
   useEffect(() => {
     fetchGroup();
-  }, [id]);
+  }, [fetchGroup]);
 
   const handleAddMember = async (memberId: string) => {
     try {

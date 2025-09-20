@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -73,7 +73,7 @@ export default function BiblicalSchoolClassDetailPage() {
   const [attendanceDate, setAttendanceDate] = useState(new Date().toISOString().split('T')[0]);
   const [attendanceRecords, setAttendanceRecords] = useState<AttendanceRecord[]>([]);
 
-  const fetchClass = async () => {
+  const fetchClass = useCallback(async () => {
     if (!id) return;
     try {
       const response = await axios.get(`${API_URL}/biblical-school/${id}`);
@@ -82,9 +82,9 @@ export default function BiblicalSchoolClassDetailPage() {
       console.error('Failed to fetch class:', error);
       router.push('/biblical-school');
     }
-  };
+  }, [id, router]);
 
-  const fetchAttendance = async (date: string) => {
+  const fetchAttendance = useCallback(async (date: string) => {
     if (!id || !date) return;
     try {
       const response = await axios.get(`${API_URL}/biblical-school/${id}/attendance?date=${date}`);
@@ -93,17 +93,17 @@ export default function BiblicalSchoolClassDetailPage() {
       console.error('Failed to fetch attendance:', error);
       setAttendanceRecords([]);
     }
-  };
+  }, [id]);
 
   useEffect(() => {
     fetchClass();
-  }, [id]);
+  }, [fetchClass]);
 
   useEffect(() => {
     if (attendanceDate) {
       fetchAttendance(attendanceDate);
     }
-  }, [attendanceDate, id]);
+  }, [attendanceDate, fetchAttendance]);
 
   const handleAssignParticipant = async (memberId: string, role: ClassRole) => {
     try {
