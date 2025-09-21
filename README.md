@@ -1,229 +1,121 @@
 # Gestor de Igrejas
 
-Um sistema completo para gestão de membresia de igrejas, com funcionalidades de autenticação, gerenciamento de membros, grupos e ministérios, e controle de turmas e presença da Escola Bíblica Dominical.
+Sistema completo para gestão de membresia de igrejas com autenticação, gerenciamento de membros, grupos/ministérios e Escola Bíblica Dominical.
 
-## Funcionalidades
+## ✨ Funcionalidades
 
-- **Autenticação de Usuários:** Registro e login com JWT (JSON Web Tokens).
-- **Gerenciamento de Membros:** CRUD completo para perfis de membros da igreja.
-- **Grupos e Ministérios:** Criação e gestão de grupos/ministérios, com associação de membros.
-- **Escola Bíblica Dominical:** Gerenciamento de turmas, atribuição de alunos e professores, e controle de presença.
-- **Dashboard:** Visão geral com estatísticas e resumos do sistema.
+- **Autenticação JWT** - Login/registro seguro
+- **Gestão de Membros** - CRUD completo com dados pessoais
+- **Grupos e Ministérios** - Organização e associação de membros
+- **Escola Bíblica** - Turmas, participantes e controle de presença
+- **Dashboard** - Estatísticas e visão geral do sistema
+- **API Documentada** - Swagger para testes e integração
 
-## Tecnologias Utilizadas
+## 🛠 Tecnologias
 
-### Backend
+**Backend:** NestJS, Prisma, MongoDB, JWT, Passport.js  
+**Frontend:** Next.js, TypeScript, Tailwind CSS, shadcn/ui, Axios  
+**DevOps:** Docker, Docker Compose
 
-- **Framework:** Nest.js
-- **ORM:** Prisma
-- **Banco de Dados:** MongoDB
-- **Autenticação:** Passport.js com JWT e bcrypt para hash de senhas.
+## 🚀 Início Rápido
 
-### Frontend
+### Com Docker (Recomendado)
 
-- **Framework:** Next.js (App Router)
-- **Linguagem:** TypeScript
-- **Estilização:** Tailwind CSS
-- **Componentes UI:** shadcn/ui
-- **Requisições HTTP:** Axios
+```bash
+# 1. Clone e navegue para o projeto
+cd gestor-de-igrejas
 
-## Estrutura do Projeto
+# 2. Configure o backend
+cd backend && cp .env.example .env
+# Edite o .env com suas configurações
 
-O projeto é dividido em dois diretórios principais:
+# 3. Execute o projeto
+docker compose up -d
 
-```text
-gestor-de-igrejas/
-├── backend/ # Projeto Nest.js (API)
-│   ├── src/
-│   │   ├── auth/             # Módulo de Autenticação (login, signup, JWT strategy, guards)
-│   │   ├── members/          # Módulo de Gerenciamento de Membros (CRUD)
-│   │   ├── groups/           # Módulo de Gerenciamento de Grupos e Ministérios (CRUD, associação de membros)
-│   │   ├── biblical-school/  # Módulo de Escola Bíblica (CRUD de turmas, gestão de participantes, presença)
-│   │   ├── dashboard/        # Módulo para dados agregados do Dashboard
-│   │   ├── prisma/           # Configuração do PrismaService para injeção de dependência
-│   │   └── main.ts           # Ponto de entrada da aplicação Nest.js
-│   ├── prisma/               # Configuração do Prisma (schema.prisma, seed.ts)
-│   │   └── schema.prisma     # Definição do esquema do banco de dados
-│   │   └── seed.ts           # Script para popular o banco de dados com dados iniciais
-│   ├── .env.example          # Exemplo de variáveis de ambiente para o backend
-│   ├── Dockerfile            # Dockerfile para construir a imagem do backend
-│   └── package.json          # Dependências e scripts do backend
-│
-├── frontend/ # Projeto Next.js (Interface do Usuário)
-│   ├── src/
-│   │   ├── app/              # Rotas e layout principal da aplicação (App Router)
-│   │   │   ├── (auth)/login/ # Página de Login
-│   │   │   ├── members/      # Página de listagem e gestão de Membros
-│   │   │   ├── groups/       # Página de listagem e gestão de Grupos
-│   │   │   ├── biblical-school/ # Página de listagem e gestão da Escola Bíblica
-│   │   │   └── page.tsx      # Página inicial (Dashboard)
-│   │   ├── components/       # Componentes React reutilizáveis (UI, formulários, layout)
-│   │   │   ├── auth/         # Componentes específicos de autenticação (ex: LoginForm)
-│   │   │   ├── members/      # Componentes específicos de membros (ex: MemberForm)
-│   │   │   ├── groups/       # Componentes específicos de grupos (ex: GroupForm, MemberSelect)
-│   │   │   ├── biblical-school/ # Componentes específicos da Escola Bíblica
-│   │   │   └── ui/           # Componentes shadcn/ui gerados
-│   │   ├── contexts/         # Contextos React para gerenciamento de estado global (ex: AuthContext)
-│   │   ├── lib/              # Funções utilitárias (ex: cn para classes CSS)
-│   │   └── types/            # Definições de tipos globais ou estendidos
-│   ├── .env.local.example    # Exemplo de variáveis de ambiente para o frontend
-│   ├── components.json       # Configuração da shadcn/ui
-│   ├── Dockerfile            # Dockerfile para construir a imagem do frontend
-│   └── package.json          # Dependências e scripts do frontend
-│
-└── docker-compose.yml        # Configuração do Docker Compose para orquestrar os serviços
+# 4. Seed do banco (primeira vez)
+docker compose exec backend npx prisma db seed
 ```
 
-## Como Rodar o Projeto
+**Acesse:**
+- Frontend: http://localhost:3001
+- API: http://localhost:3000
+- Swagger: http://localhost:3000/api
 
-Você tem duas opções para rodar o projeto: usando Docker Compose (recomendado para desenvolvimento) ou manualmente.
+### Instalação Manual
 
-### Pré-requisitos
+**Backend:**
+```bash
+cd backend
+pnpm install
+cp .env.example .env  # Configure DATABASE_URL e JWT_SECRET
+npx prisma generate
+npx prisma db seed
+pnpm run start:dev
+```
 
-- Node.js (versão 18 ou superior) - *Necessário apenas para rodar manualmente*
-- pnpm (gerenciador de pacotes) - *Necessário apenas para rodar manualmente*
-- Docker e Docker Compose - *Necessário para rodar com Docker Compose*
-- MongoDB (instância local ou na nuvem, ex: MongoDB Atlas) - *Necessário para rodar manualmente*
+**Frontend:**
+```bash
+cd frontend
+pnpm install
+echo 'NEXT_PUBLIC_API_URL="http://localhost:3000"' > .env.local
+pnpm run dev
+```
 
-### Opção 1: Rodar com Docker Compose (Recomendado)
+## 📋 Uso
 
-Esta opção configura um ambiente completo com MongoDB, backend e frontend em contêineres Docker.
+1. **Login:** Acesse http://localhost:3001/login
+2. **Credenciais padrão:** `admin@example.com` / `admin123`
+3. **Navegação:** Use a barra superior para acessar os módulos
 
-1. **Navegue até a raiz do projeto:**
+## 🧪 Testes
 
-   ```bash
-   cd gestor-de-igrejas
-   ```
+```bash
+# Backend
+cd backend
+pnpm test              # Testes unitários
+pnpm test:cov          # Com coverage
+pnpm test:e2e          # End-to-end
+pnpm lint              # Linting
 
-2. **Crie o arquivo `.env` para o backend:**
+# Frontend
+cd frontend
+pnpm test              # Testes unitários
+pnpm lint              # Linting
 
-   - Navegue até `gestor-de-igrejas/backend`.
-   - Copie o `.env.example` para `.env`:
+# Com Docker
+docker compose exec backend pnpm test
+docker compose exec frontend pnpm test
+```
 
-     ```bash
-     cp .env.example .env
-     ```
+## 📁 Estrutura
 
-   - Edite o arquivo `.env` e configure as variáveis:
+```
+gestor-de-igrejas/
+├── backend/           # API NestJS
+│   ├── src/
+│   │   ├── auth/      # Autenticação JWT
+│   │   ├── members/   # Gestão de membros
+│   │   ├── groups/    # Grupos e ministérios
+│   │   ├── biblical-school/ # Escola bíblica
+│   │   └── dashboard/ # Estatísticas
+│   └── prisma/        # Schema e seed
+├── frontend/          # Interface Next.js
+│   └── src/
+│       ├── app/       # Páginas (App Router)
+│       ├── components/ # Componentes React
+│       └── contexts/  # Estado global
+└── docker-compose.yml # Orquestração
+```
 
-     ```env
-     # Para Docker Compose, aponte para o serviço 'mongodb' e use as credenciais do docker-compose.yml
-     DATABASE_URL="mongodb://admin:password@mongodb:27017/gestor_db?authSource=admin"
-     JWT_SECRET="SUA_CHAVE_SECRETA_JWT_AQUI"
-     ```
+## 📝 Variáveis de Ambiente
 
-     (Substitua `admin` e `password` se você os alterou no `docker-compose.yml`, e `SUA_CHAVE_SECRETA_JWT_AQUI` pela sua chave JWT real).
+**Backend (.env):**
+```env
+DATABASE_URL="mongodb://admin:password@mongodb:27017/gestor_db?authSource=admin"
+JWT_SECRET="sua_chave_secreta_jwt"
+```
 
-3. **Construa e Inicie os Contêineres:**
-
-   - Na raiz do projeto (`gestor-de-igrejas`):
-
-     ```bash
-     docker compose build
-     docker compose up -d
-     ```
-
-     Isso construirá as imagens e iniciará os serviços em segundo plano.
-
-4. **Execute o Seed do Banco de Dados (apenas na primeira vez ou quando precisar):**
-
-   - Para criar o usuário administrador padrão:
-
-     ```bash
-     docker compose exec backend npx prisma db seed
-     ```
-
-5. **Acesse a Aplicação:**
-
-   - **Frontend:** Abra seu navegador e acesse `http://localhost:3001`.
-   - **Backend API:** A API estará disponível em `http://localhost:3000`.
-
-### Opção 2: Rodar Manualmente (Sem Docker)
-
-Esta opção exige que você tenha Node.js, pnpm e uma instância de MongoDB rodando localmente ou acessível.
-
-#### Configuração do Backend
-
-1. Navegue até o diretório do backend:
-
-   ```bash
-   cd gestor-de-igrejas/backend
-   ```
-
-2. Instale as dependências:
-
-   ```bash
-   pnpm install
-   ```
-
-3. Crie um arquivo `.env` na raiz do diretório `backend` (se ainda não tiver) e configure as variáveis de ambiente:
-
-   - Copie o `.env.example` para `.env`:
-
-     ```bash
-     cp .env.example .env
-     ```
-
-   - Edite o arquivo `.env` e configure as variáveis:
-
-     ```env
-     # Para rodar manualmente, aponte para sua instância de MongoDB local ou Atlas
-     DATABASE_URL="mongodb+srv://<db_username>:<db_password>@cluster0.atlfwpo.mongodb.net/<database_name>?retryWrites=true&w=majority&appName=Cluster0"
-     JWT_SECRET="SUA_CHAVE_SECRETA_JWT_AQUI"
-     ```
-
-     (Substitua `<db_username>`, `<db_password>`, `<database_name>` e `SUA_CHAVE_SECRETA_JWT_AQUI` pelos seus dados reais).
-
-4. Gere o Prisma Client (necessário para o TypeScript):
-
-   ```bash
-   npx prisma generate
-   ```
-
-5. Execute o Seed do Banco de Dados (apenas na primeira vez ou quando precisar):
-
-   ```bash
-   npx prisma db seed
-   ```
-
-6. Inicie o servidor de desenvolvimento:
-
-   ```bash
-   pnpm run start:dev
-   ```
-
-   O backend estará rodando em `http://localhost:3000`.
-
-#### Configuração do Frontend
-
-1. Navegue até o diretório do frontend em um **novo terminal**:
-
-   ```bash
-   cd gestor-de-igrejas/frontend
-   ```
-
-2. Instale as dependências:
-
-   ```bash
-   pnpm install
-   ```
-
-3. Crie um arquivo `.env.local` na raiz do diretório `frontend` (se ainda não tiver) e configure a URL da API:
-
-   ```env
-   NEXT_PUBLIC_API_URL="http://localhost:3000"
-   ```
-
-4. Inicie o servidor de desenvolvimento:
-
-   ```bash
-   pnpm run dev
-   ```
-
-   O frontend estará rodando em `http://localhost:3001`.
-
-## Uso da Aplicação
-
-1. **Criar um Usuário:** Se você não usou o seed, você pode criar um usuário via API (Postman/Insomnia) enviando um `POST` para `http://localhost:3000/auth/signup` com um corpo JSON contendo `email` e `password`.
-2. **Login:** Acesse `http://localhost:3001/login` no seu navegador. Use as credenciais criadas (seja pelo seed ou manualmente) para fazer login.
-3. **Navegação:** Após o login, você será redirecionado para o Dashboard. Use a barra de navegação superior para acessar os módulos de Membros, Grupos e Escola Bíblica.
+**Frontend (.env.local):**
+```env
+NEXT_PUBLIC_API_URL="http://localhost:3000"
+```
