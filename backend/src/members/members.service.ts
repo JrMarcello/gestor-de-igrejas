@@ -7,7 +7,16 @@ export class MembersService {
   constructor(private prisma: PrismaService) {}
 
   create(createMemberDto: CreateMemberDto) {
-    return this.prisma.member.create({ data: createMemberDto });
+    // Converte a data de nascimento para DateTime
+    const birthDate = new Date(createMemberDto.birthDate);
+    birthDate.setUTCHours(12, 0, 0, 0); // Define meio-dia UTC para evitar problemas de fuso horário
+
+    return this.prisma.member.create({
+      data: {
+        ...createMemberDto,
+        birthDate,
+      },
+    });
   }
 
   findAll() {
@@ -23,9 +32,18 @@ export class MembersService {
   }
 
   update(id: string, updateMemberDto: UpdateMemberDto) {
+    const data = { ...updateMemberDto };
+
+    // Se houver uma data de nascimento, converte para DateTime
+    if (data.birthDate) {
+      const birthDate = new Date(data.birthDate);
+      birthDate.setUTCHours(12, 0, 0, 0);
+      data.birthDate = birthDate;
+    }
+
     return this.prisma.member.update({
       where: { id },
-      data: updateMemberDto,
+      data,
     });
   }
 

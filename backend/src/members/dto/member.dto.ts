@@ -13,7 +13,7 @@ export class CreateMemberDto {
 
   @IsDateString()
   @IsNotEmpty()
-  birthDate: string;
+  birthDate: string | Date;
 
   @IsString()
   @IsOptional()
@@ -35,7 +35,7 @@ export class UpdateMemberDto {
 
   @IsDateString()
   @IsOptional()
-  birthDate?: string;
+  birthDate?: string | Date;
 
   @IsString()
   @IsOptional()

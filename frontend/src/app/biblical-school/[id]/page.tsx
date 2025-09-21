@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { AuthGuard } from '@/components/auth/auth-guard';
 import {
   Card,
   CardContent,
@@ -155,10 +156,11 @@ export default function BiblicalSchoolClassDetailPage() {
   const studentsInClass = classItem.participants.filter(p => p.role === ClassRole.STUDENT).map(p => p.member);
 
   return (
-    <div className="container mx-auto py-10">
-      <Button variant="outline" onClick={() => router.push('/biblical-school')} className="mb-6">
-        &larr; Voltar para Turmas
-      </Button>
+    <AuthGuard>
+      <div className="container mx-auto py-10">
+        <Button variant="outline" onClick={() => router.push('/biblical-school')} className="mb-6">
+          &larr; Voltar para Turmas
+        </Button>
       <Card className="mb-6">
         <CardHeader>
           <CardTitle className="text-3xl">{classItem.name}</CardTitle>
@@ -281,6 +283,7 @@ export default function BiblicalSchoolClassDetailPage() {
           </div>
         </CardContent>
       </Card>
-    </div>
+      </div>
+    </AuthGuard>
   );
 }

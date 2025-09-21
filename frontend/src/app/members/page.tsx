@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Button } from '@/components/ui/button';
+import { AuthGuard } from '@/components/auth/auth-guard';
 import {
   Table,
   TableBody,
@@ -77,61 +78,63 @@ export default function MembersPage() {
   };
 
   return (
-    <div className="container mx-auto py-10">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Membros</h1>
-        <Button onClick={() => {
-          setEditingMember(undefined);
-          setIsFormOpen(true);
-        }}>Adicionar Membro</Button>
-      </div>
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Nome</TableHead>
-              <TableHead>Data de Nasc.</TableHead>
-              <TableHead>Telefone</TableHead>
-              <TableHead>Batizado</TableHead>
-              <TableHead><span className="sr-only">Ações</span></TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {members.map((member) => (
-              <TableRow key={member.id}>
-                <TableCell className="font-medium">{member.name}</TableCell>
-                <TableCell>{new Date(member.birthDate).toLocaleDateString()}</TableCell>
-                <TableCell>{member.phone || 'N/A'}</TableCell>
-                <TableCell>{member.baptized ? 'Sim' : 'Não'}</TableCell>
-                <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
-                        <span className="sr-only">Abrir menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>Ações</DropdownMenuLabel>
-                      <DropdownMenuItem onClick={() => {
-                        setEditingMember(member);
-                        setIsFormOpen(true);
-                      }}>Editar</DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleDelete(member.id)} className="text-red-600">Excluir</DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
+    <AuthGuard>
+      <div className="container mx-auto py-10">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold">Membros</h1>
+          <Button onClick={() => {
+            setEditingMember(undefined);
+            setIsFormOpen(true);
+          }}>Adicionar Membro</Button>
+        </div>
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Nome</TableHead>
+                <TableHead>Data de Nasc.</TableHead>
+                <TableHead>Telefone</TableHead>
+                <TableHead>Batizado</TableHead>
+                <TableHead><span className="sr-only">Ações</span></TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {members.map((member) => (
+                <TableRow key={member.id}>
+                  <TableCell className="font-medium">{member.name}</TableCell>
+                  <TableCell>{new Date(member.birthDate).toLocaleDateString()}</TableCell>
+                  <TableCell>{member.phone || 'N/A'}</TableCell>
+                  <TableCell>{member.baptized ? 'Sim' : 'Não'}</TableCell>
+                  <TableCell>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <span className="sr-only">Abrir menu</span>
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Ações</DropdownMenuLabel>
+                        <DropdownMenuItem onClick={() => {
+                          setEditingMember(member);
+                          setIsFormOpen(true);
+                        }}>Editar</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleDelete(member.id)} className="text-red-600">Excluir</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+        <MemberForm 
+          isOpen={isFormOpen} 
+          onClose={() => setIsFormOpen(false)} 
+          onSave={handleSave} 
+          memberToEdit={editingMember} 
+        />
       </div>
-      <MemberForm 
-        isOpen={isFormOpen} 
-        onClose={() => setIsFormOpen(false)} 
-        onSave={handleSave} 
-        memberToEdit={editingMember} 
-      />
-    </div>
+    </AuthGuard>
   );
 }

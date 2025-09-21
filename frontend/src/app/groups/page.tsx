@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Button } from '@/components/ui/button';
+import { AuthGuard } from '@/components/auth/auth-guard';
 import {
   Card,
   CardContent,
@@ -66,40 +67,42 @@ export default function GroupsPage() {
   };
 
   return (
-    <div className="container mx-auto py-10">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Grupos e Ministérios</h1>
-        <Button onClick={() => {
-          setEditingGroup(undefined);
-          setIsFormOpen(true);
-        }}>Adicionar Grupo</Button>
+    <AuthGuard>
+      <div className="container mx-auto py-10">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold">Grupos e Ministérios</h1>
+          <Button onClick={() => {
+            setEditingGroup(undefined);
+            setIsFormOpen(true);
+          }}>Adicionar Grupo</Button>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {groups.map((group) => (
+            <Card key={group.id}>
+              <CardHeader>
+                <CardTitle>{group.name}</CardTitle>
+                <CardDescription>{group.description || 'Sem descrição.'}</CardDescription>
+              </CardHeader>
+              <CardContent className="flex justify-end gap-2">
+                <Button variant="outline" size="sm" onClick={() => {
+                  setEditingGroup(group);
+                  setIsFormOpen(true);
+                }}>Editar</Button>
+                <Button variant="destructive" size="sm" onClick={() => handleDelete(group.id)}>Excluir</Button>
+                <Link href={`/groups/${group.id}`} passHref>
+                  <Button size="sm">Ver Detalhes</Button>
+                </Link>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+        <GroupForm 
+          isOpen={isFormOpen} 
+          onClose={() => setIsFormOpen(false)} 
+          onSave={handleSave} 
+          groupToEdit={editingGroup} 
+        />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {groups.map((group) => (
-          <Card key={group.id}>
-            <CardHeader>
-              <CardTitle>{group.name}</CardTitle>
-              <CardDescription>{group.description || 'Sem descrição.'}</CardDescription>
-            </CardHeader>
-            <CardContent className="flex justify-end gap-2">
-              <Button variant="outline" size="sm" onClick={() => {
-                setEditingGroup(group);
-                setIsFormOpen(true);
-              }}>Editar</Button>
-              <Button variant="destructive" size="sm" onClick={() => handleDelete(group.id)}>Excluir</Button>
-              <Link href={`/groups/${group.id}`} passHref>
-                <Button size="sm">Ver Detalhes</Button>
-              </Link>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-      <GroupForm 
-        isOpen={isFormOpen} 
-        onClose={() => setIsFormOpen(false)} 
-        onSave={handleSave} 
-        groupToEdit={editingGroup} 
-      />
-    </div>
+    </AuthGuard>
   );
 }

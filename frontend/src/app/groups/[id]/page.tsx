@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { AuthGuard } from '@/components/auth/auth-guard';
 import {
   Card,
   CardContent,
@@ -90,10 +91,11 @@ export default function GroupDetailPage() {
   const currentMemberIds = group.members.map(m => m.member.id);
 
   return (
-    <div className="container mx-auto py-10">
-      <Button variant="outline" onClick={() => router.push('/groups')} className="mb-6">
-        &larr; Voltar para Grupos
-      </Button>
+    <AuthGuard>
+      <div className="container mx-auto py-10">
+        <Button variant="outline" onClick={() => router.push('/groups')} className="mb-6">
+          &larr; Voltar para Grupos
+        </Button>
       <Card className="mb-6">
         <CardHeader>
           <CardTitle className="text-3xl">{group.name}</CardTitle>
@@ -146,6 +148,7 @@ export default function GroupDetailPage() {
           </div>
         </CardContent>
       </Card>
-    </div>
+      </div>
+    </AuthGuard>
   );
 }

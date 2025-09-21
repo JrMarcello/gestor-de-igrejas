@@ -28,13 +28,20 @@ export function LoginForm() {
     e.preventDefault();
     setError('');
     try {
+      console.log('Tentando login com URL:', API_URL);
       const response = await axios.post(`${API_URL}/auth/signin`, { email, password });
+      console.log('Resposta do servidor:', response.data);
       const { access_token } = response.data;
       login(access_token);
       router.push('/'); // Redireciona para o dashboard
-    } catch (err) {
-      setError('Email ou senha inválidos.');
-      console.error(err);
+    } catch (err: any) {
+      console.error('Erro detalhado:', {
+        message: err.message,
+        response: err.response?.data,
+        status: err.response?.status,
+        url: API_URL
+      });
+      setError(err.response?.data?.message || 'Email ou senha inválidos.');
     }
   };
 
