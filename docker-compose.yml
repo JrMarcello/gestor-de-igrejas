@@ -1,17 +1,17 @@
 version: '3.8'
 
 services:
-  mongodb:
-    image: mongo:latest
-    container_name: gestor-mongodb
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongodb_data:/data/db
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: password
-    restart: unless-stopped
+  # mongodb:
+  #   image: mongo:latest
+  #   container_name: gestor-mongodb
+  #   ports:
+  #     - "27017:27017"
+  #   volumes:
+  #     - mongodb_data:/data/db
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: admin
+  #     MONGO_INITDB_ROOT_PASSWORD: password
+  #   restart: unless-stopped
 
   backend:
     build:
@@ -20,14 +20,8 @@ services:
     container_name: gestor-backend
     ports:
       - "3000:3000"
-    volumes:
-      - ./backend:/app
-      - /app/node_modules # Evita que o node_modules local sobrescreva o do container
-    depends_on:
-      - mongodb
-    environment:
-      DATABASE_URL: mongodb://admin:password@mongodb:27017/gestor_db?authSource=admin
-      JWT_SECRET: ${JWT_SECRET:-YOUR_SUPER_SECRET_KEY_CHANGE_ME}
+    env_file:
+      - ./backend/.env
     restart: unless-stopped
 
   frontend:
@@ -37,14 +31,11 @@ services:
     container_name: gestor-frontend
     ports:
       - "3001:3001"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules # Evita que o node_modules local sobrescreva o do container
     depends_on:
       - backend
     environment:
       NEXT_PUBLIC_API_URL: http://backend:3000
     restart: unless-stopped
 
-volumes:
-  mongodb_data:
+# volumes:
+#   mongodb_data:

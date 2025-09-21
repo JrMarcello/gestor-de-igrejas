@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { MembersService } from './members.service';
 import { CreateMemberDto, UpdateMemberDto } from './dto/member.dto';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
@@ -33,4 +42,3 @@ export class MembersController {
     return this.membersService.remove(id);
   }
 }
-

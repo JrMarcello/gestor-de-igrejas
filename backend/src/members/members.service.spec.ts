@@ -76,13 +76,17 @@ describe('MembersService', () => {
   describe('findOne', () => {
     it('should return a single member', async () => {
       const result = await service.findOne(mockMember.id);
-      expect(prisma.member.findUnique).toHaveBeenCalledWith({ where: { id: mockMember.id } });
+      expect(prisma.member.findUnique).toHaveBeenCalledWith({
+        where: { id: mockMember.id },
+      });
       expect(result).toEqual(mockMember);
     });
 
     it('should throw NotFoundException if member not found', async () => {
       mockPrismaService.member.findUnique.mockResolvedValueOnce(null);
-      await expect(service.findOne('nonExistentId')).rejects.toThrow(NotFoundException);
+      await expect(service.findOne('nonExistentId')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -104,7 +108,9 @@ describe('MembersService', () => {
   describe('remove', () => {
     it('should remove a member', async () => {
       const result = await service.remove(mockMember.id);
-      expect(prisma.member.delete).toHaveBeenCalledWith({ where: { id: mockMember.id } });
+      expect(prisma.member.delete).toHaveBeenCalledWith({
+        where: { id: mockMember.id },
+      });
       expect(result).toEqual(mockMember);
     });
   });

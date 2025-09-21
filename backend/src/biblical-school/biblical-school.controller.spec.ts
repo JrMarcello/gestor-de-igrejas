@@ -1,7 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BiblicalSchoolController } from './biblical-school.controller';
 import { BiblicalSchoolService } from './biblical-school.service';
-import { CreateBiblicalSchoolClassDto, UpdateBiblicalSchoolClassDto, AssignParticipantDto, RecordAttendanceDto, UpdateAttendanceDto } from './dto/biblical-school.dto';
+import {
+  CreateBiblicalSchoolClassDto,
+  UpdateBiblicalSchoolClassDto,
+  AssignParticipantDto,
+  RecordAttendanceDto,
+  UpdateAttendanceDto,
+} from './dto/biblical-school.dto';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { ClassRole, AttendanceStatus } from '@prisma/client';
 
@@ -83,15 +89,21 @@ describe('BiblicalSchoolController', () => {
     });
 
     it('should throw NotFoundException', async () => {
-      mockBiblicalSchoolService.findOne.mockRejectedValueOnce(new NotFoundException());
-      await expect(controller.findOne('nonExistentId')).rejects.toThrow(NotFoundException);
+      mockBiblicalSchoolService.findOne.mockRejectedValueOnce(
+        new NotFoundException(),
+      );
+      await expect(controller.findOne('nonExistentId')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
   describe('update', () => {
     it('should update a class', async () => {
       const updateDto: UpdateBiblicalSchoolClassDto = { name: 'Updated Class' };
-      expect(await controller.update(mockClass.id, updateDto)).toEqual(mockClass);
+      expect(await controller.update(mockClass.id, updateDto)).toEqual(
+        mockClass,
+      );
       expect(service.update).toHaveBeenCalledWith(mockClass.id, updateDto);
     });
   });
@@ -105,49 +117,90 @@ describe('BiblicalSchoolController', () => {
 
   describe('assignParticipant', () => {
     it('should assign a participant', async () => {
-      const assignDto: AssignParticipantDto = { memberId: 'memberId1', role: ClassRole.STUDENT };
+      const assignDto: AssignParticipantDto = {
+        memberId: 'memberId1',
+        role: ClassRole.STUDENT,
+      };
       await controller.assignParticipant(mockClass.id, assignDto);
-      expect(service.assignParticipant).toHaveBeenCalledWith(mockClass.id, assignDto);
+      expect(service.assignParticipant).toHaveBeenCalledWith(
+        mockClass.id,
+        assignDto,
+      );
     });
 
     it('should throw BadRequestException', async () => {
-      mockBiblicalSchoolService.assignParticipant.mockRejectedValueOnce(new BadRequestException());
-      await expect(controller.assignParticipant(mockClass.id, { memberId: 'memberId1', role: ClassRole.STUDENT })).rejects.toThrow(BadRequestException);
+      mockBiblicalSchoolService.assignParticipant.mockRejectedValueOnce(
+        new BadRequestException(),
+      );
+      await expect(
+        controller.assignParticipant(mockClass.id, {
+          memberId: 'memberId1',
+          role: ClassRole.STUDENT,
+        }),
+      ).rejects.toThrow(BadRequestException);
     });
   });
 
   describe('removeParticipant', () => {
     it('should remove a participant', async () => {
       await controller.removeParticipant(mockClass.id, 'memberId1');
-      expect(service.removeParticipant).toHaveBeenCalledWith(mockClass.id, 'memberId1');
+      expect(service.removeParticipant).toHaveBeenCalledWith(
+        mockClass.id,
+        'memberId1',
+      );
     });
 
     it('should throw NotFoundException', async () => {
-      mockBiblicalSchoolService.removeParticipant.mockRejectedValueOnce(new NotFoundException());
-      await expect(controller.removeParticipant(mockClass.id, 'memberId1')).rejects.toThrow(NotFoundException);
+      mockBiblicalSchoolService.removeParticipant.mockRejectedValueOnce(
+        new NotFoundException(),
+      );
+      await expect(
+        controller.removeParticipant(mockClass.id, 'memberId1'),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 
   describe('recordAttendance', () => {
     it('should record attendance', async () => {
-      const recordDto: RecordAttendanceDto = { memberId: 'memberId1', date: '2025-01-01', status: AttendanceStatus.PRESENT };
-      expect(await controller.recordAttendance(mockClass.id, recordDto)).toEqual(mockAttendance);
-      expect(service.recordAttendance).toHaveBeenCalledWith(mockClass.id, recordDto);
+      const recordDto: RecordAttendanceDto = {
+        memberId: 'memberId1',
+        date: '2025-01-01',
+        status: AttendanceStatus.PRESENT,
+      };
+      expect(
+        await controller.recordAttendance(mockClass.id, recordDto),
+      ).toEqual(mockAttendance);
+      expect(service.recordAttendance).toHaveBeenCalledWith(
+        mockClass.id,
+        recordDto,
+      );
     });
   });
 
   describe('getAttendance', () => {
     it('should return attendance records', async () => {
-      expect(await controller.getAttendance(mockClass.id, '2025-01-01')).toEqual([mockAttendance]);
-      expect(service.getAttendance).toHaveBeenCalledWith(mockClass.id, '2025-01-01');
+      expect(
+        await controller.getAttendance(mockClass.id, '2025-01-01'),
+      ).toEqual([mockAttendance]);
+      expect(service.getAttendance).toHaveBeenCalledWith(
+        mockClass.id,
+        '2025-01-01',
+      );
     });
   });
 
   describe('updateAttendance', () => {
     it('should update attendance', async () => {
-      const updateDto: UpdateAttendanceDto = { status: AttendanceStatus.ABSENT };
-      expect(await controller.updateAttendance(mockAttendance.id, updateDto)).toEqual(mockAttendance);
-      expect(service.updateAttendance).toHaveBeenCalledWith(mockAttendance.id, updateDto);
+      const updateDto: UpdateAttendanceDto = {
+        status: AttendanceStatus.ABSENT,
+      };
+      expect(
+        await controller.updateAttendance(mockAttendance.id, updateDto),
+      ).toEqual(mockAttendance);
+      expect(service.updateAttendance).toHaveBeenCalledWith(
+        mockAttendance.id,
+        updateDto,
+      );
     });
   });
 });

@@ -1,6 +1,5 @@
-import { JwtStrategy } from './jwt.strategy';
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConfigService } from '@nestjs/config'; // Mock this if needed
+import { JwtStrategy } from './jwt.strategy';
 import { Role } from '@prisma/client';
 
 describe('JwtStrategy', () => {
@@ -26,13 +25,13 @@ describe('JwtStrategy', () => {
   });
 
   describe('validate', () => {
-    it('should return the user payload', async () => {
+    it('should return the user payload', () => {
       const payload = {
         sub: 'someUserId',
         email: 'test@example.com',
         role: Role.MEMBER,
       };
-      const result = await jwtStrategy.validate(payload);
+      const result = jwtStrategy.validate(payload);
       expect(result).toEqual({
         userId: 'someUserId',
         email: 'test@example.com',

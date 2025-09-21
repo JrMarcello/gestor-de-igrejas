@@ -1,4 +1,10 @@
-import { IsString, IsNotEmpty, IsOptional, IsEnum, IsDateString } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  IsEnum,
+  IsDateString,
+} from 'class-validator';
 import { ClassRole, AttendanceStatus } from '@prisma/client';
 
 export class CreateBiblicalSchoolClassDto {

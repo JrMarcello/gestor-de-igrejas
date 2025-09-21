@@ -8,7 +8,8 @@ export class DashboardService {
   async getSummaryData() {
     const totalMembers = await this.prisma.member.count();
     const totalGroups = await this.prisma.group.count();
-    const totalBiblicalSchoolClasses = await this.prisma.biblicalSchoolClass.count();
+    const totalBiblicalSchoolClasses =
+      await this.prisma.biblicalSchoolClass.count();
 
     // Poderíamos adicionar mais dados aqui, como membros batizados, etc.
 
@@ -19,4 +20,3 @@ export class DashboardService {
     };
   }
 }
-

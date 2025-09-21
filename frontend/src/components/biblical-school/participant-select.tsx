@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from '@/components/ui/label';
-import { ClassRole } from '@prisma/client'; // Assumindo que você tem os tipos do Prisma disponíveis no frontend
+import { ClassRole } from '@/types/enums';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 

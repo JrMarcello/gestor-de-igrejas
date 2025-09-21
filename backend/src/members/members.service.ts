@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateMemberDto, UpdateMemberDto } from './dto/member.dto';
 
@@ -14,8 +14,12 @@ export class MembersService {
     return this.prisma.member.findMany();
   }
 
-  findOne(id: string) {
-    return this.prisma.member.findUnique({ where: { id } });
+  async findOne(id: string) {
+    const member = await this.prisma.member.findUnique({ where: { id } });
+    if (!member) {
+      throw new NotFoundException(`Member with ID ${id} not found`);
+    }
+    return member;
   }
 
   update(id: string, updateMemberDto: UpdateMemberDto) {
@@ -29,4 +33,3 @@ export class MembersService {
     return this.prisma.member.delete({ where: { id } });
   }
 }
-

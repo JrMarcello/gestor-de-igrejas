@@ -1,6 +1,24 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpCode, HttpStatus, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  HttpCode,
+  HttpStatus,
+  Query,
+} from '@nestjs/common';
 import { BiblicalSchoolService } from './biblical-school.service';
-import { CreateBiblicalSchoolClassDto, UpdateBiblicalSchoolClassDto, AssignParticipantDto, RecordAttendanceDto, UpdateAttendanceDto } from './dto/biblical-school.dto';
+import {
+  CreateBiblicalSchoolClassDto,
+  UpdateBiblicalSchoolClassDto,
+  AssignParticipantDto,
+  RecordAttendanceDto,
+  UpdateAttendanceDto,
+} from './dto/biblical-school.dto';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 
 @UseGuards(JwtAuthGuard)
@@ -24,7 +42,10 @@ export class BiblicalSchoolController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBiblicalSchoolClassDto: UpdateBiblicalSchoolClassDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateBiblicalSchoolClassDto: UpdateBiblicalSchoolClassDto,
+  ) {
     return this.biblicalSchoolService.update(id, updateBiblicalSchoolClassDto);
   }
 
@@ -36,20 +57,35 @@ export class BiblicalSchoolController {
   // Endpoints para participantes
   @Post(':id/participants')
   @HttpCode(HttpStatus.NO_CONTENT)
-  assignParticipant(@Param('id') classId: string, @Body() assignParticipantDto: AssignParticipantDto) {
-    return this.biblicalSchoolService.assignParticipant(classId, assignParticipantDto);
+  assignParticipant(
+    @Param('id') classId: string,
+    @Body() assignParticipantDto: AssignParticipantDto,
+  ) {
+    return this.biblicalSchoolService.assignParticipant(
+      classId,
+      assignParticipantDto,
+    );
   }
 
   @Delete(':id/participants/:memberId')
   @HttpCode(HttpStatus.NO_CONTENT)
-  removeParticipant(@Param('id') classId: string, @Param('memberId') memberId: string) {
+  removeParticipant(
+    @Param('id') classId: string,
+    @Param('memberId') memberId: string,
+  ) {
     return this.biblicalSchoolService.removeParticipant(classId, memberId);
   }
 
   // Endpoints para presença
   @Post(':id/attendance')
-  recordAttendance(@Param('id') classId: string, @Body() recordAttendanceDto: RecordAttendanceDto) {
-    return this.biblicalSchoolService.recordAttendance(classId, recordAttendanceDto);
+  recordAttendance(
+    @Param('id') classId: string,
+    @Body() recordAttendanceDto: RecordAttendanceDto,
+  ) {
+    return this.biblicalSchoolService.recordAttendance(
+      classId,
+      recordAttendanceDto,
+    );
   }
 
   @Get(':id/attendance')
@@ -58,8 +94,13 @@ export class BiblicalSchoolController {
   }
 
   @Patch('attendance/:attendanceId')
-  updateAttendance(@Param('attendanceId') attendanceId: string, @Body() updateAttendanceDto: UpdateAttendanceDto) {
-    return this.biblicalSchoolService.updateAttendance(attendanceId, updateAttendanceDto);
+  updateAttendance(
+    @Param('attendanceId') attendanceId: string,
+    @Body() updateAttendanceDto: UpdateAttendanceDto,
+  ) {
+    return this.biblicalSchoolService.updateAttendance(
+      attendanceId,
+      updateAttendanceDto,
+    );
   }
 }
-

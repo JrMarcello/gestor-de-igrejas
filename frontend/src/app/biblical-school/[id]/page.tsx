@@ -28,7 +28,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ClassRole, AttendanceStatus } from '@prisma/client';
+import { ClassRole, AttendanceStatus } from '@/types/enums';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {

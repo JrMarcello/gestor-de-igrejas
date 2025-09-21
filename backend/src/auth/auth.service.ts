@@ -3,10 +3,14 @@ import { PrismaService } from '../prisma/prisma.service';
 import { SignUpDto, SignInDto } from './dto/auth.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService, private jwtService: JwtService) {}
+  constructor(
+    private prisma: PrismaService,
+    private jwtService: JwtService,
+  ) {}
 
   async signup(dto: SignUpDto) {
     const { email, password } = dto;
@@ -25,10 +29,14 @@ export class AuthService {
       });
 
       // Retorna o usuário sem a senha
-      const { password, ...result } = user;
+      const { password: _password, ...result } = user;
       return result;
     } catch (error) {
-      if (error.code === 'P2002') { // Código de erro do Prisma para violação de constraint única
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        // Código de erro do Prisma para violação de constraint única
         throw new ForbiddenException('Credentials taken');
       }
       throw error;
@@ -58,7 +66,11 @@ export class AuthService {
     return this.signToken(user.id, user.email, user.role);
   }
 
-  async signToken(userId: string, email: string, role: string): Promise<{ access_token: string }> {
+  async signToken(
+    userId: string,
+    email: string,
+    role: string,
+  ): Promise<{ access_token: string }> {
     const payload = {
       sub: userId,
       email,
@@ -72,4 +84,3 @@ export class AuthService {
     };
   }
 }
-

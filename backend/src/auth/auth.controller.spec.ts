@@ -54,7 +54,9 @@ describe('AuthController', () => {
       };
       mockAuthService.signup.mockRejectedValueOnce(new ForbiddenException());
 
-      await expect(controller.signup(signUpDto)).rejects.toThrow(ForbiddenException);
+      await expect(controller.signup(signUpDto)).rejects.toThrow(
+        ForbiddenException,
+      );
     });
   });
 
@@ -80,7 +82,9 @@ describe('AuthController', () => {
       };
       mockAuthService.signin.mockRejectedValueOnce(new ForbiddenException());
 
-      await expect(controller.signin(signInDto)).rejects.toThrow(ForbiddenException);
+      await expect(controller.signin(signInDto)).rejects.toThrow(
+        ForbiddenException,
+      );
     });
   });
 });

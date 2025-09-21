@@ -75,14 +75,18 @@ describe('MembersController', () => {
 
     it('should throw NotFoundException', async () => {
       mockMembersService.findOne.mockRejectedValueOnce(new NotFoundException());
-      await expect(controller.findOne('nonExistentId')).rejects.toThrow(NotFoundException);
+      await expect(controller.findOne('nonExistentId')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
   describe('update', () => {
     it('should update a member', async () => {
       const updateDto: UpdateMemberDto = { name: 'Updated Name' };
-      expect(await controller.update(mockMember.id, updateDto)).toEqual(mockMember);
+      expect(await controller.update(mockMember.id, updateDto)).toEqual(
+        mockMember,
+      );
       expect(service.update).toHaveBeenCalledWith(mockMember.id, updateDto);
     });
   });

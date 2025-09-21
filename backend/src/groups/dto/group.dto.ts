@@ -21,7 +21,7 @@ export class UpdateGroupDto {
 }
 
 export class AssignMemberDto {
-    @IsString()
-    @IsNotEmpty()
-    memberId: string;
+  @IsString()
+  @IsNotEmpty()
+  memberId: string;
 }

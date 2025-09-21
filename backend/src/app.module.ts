@@ -9,7 +9,14 @@ import { BiblicalSchoolModule } from './biblical-school/biblical-school.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule, MembersModule, GroupsModule, BiblicalSchoolModule, DashboardModule],
+  imports: [
+    PrismaModule,
+    AuthModule,
+    MembersModule,
+    GroupsModule,
+    BiblicalSchoolModule,
+    DashboardModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -1,34 +1,50 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateBiblicalSchoolClassDto, UpdateBiblicalSchoolClassDto, AssignParticipantDto, RecordAttendanceDto, UpdateAttendanceDto } from './dto/biblical-school.dto';
-import { ClassRole, AttendanceStatus } from '@prisma/client';
+import {
+  AssignParticipantDto,
+  CreateBiblicalSchoolClassDto,
+  RecordAttendanceDto,
+  UpdateAttendanceDto,
+  UpdateBiblicalSchoolClassDto,
+} from './dto/biblical-school.dto';
 
 @Injectable()
 export class BiblicalSchoolService {
   constructor(private prisma: PrismaService) {}
 
   create(createBiblicalSchoolClassDto: CreateBiblicalSchoolClassDto) {
-    return this.prisma.biblicalSchoolClass.create({ data: createBiblicalSchoolClassDto });
+    return this.prisma.biblicalSchoolClass.create({
+      data: createBiblicalSchoolClassDto,
+    });
   }
 
   findAll() {
     return this.prisma.biblicalSchoolClass.findMany({
-      include: { participants: { include: { member: true } }, attendees: true },
+      include: { participants: { include: { member: true } }, attendances: true },
     });
   }
 
   async findOne(id: string) {
     const classItem = await this.prisma.biblicalSchoolClass.findUnique({
       where: { id },
-      include: { participants: { include: { member: true } }, attendees: true },
+      include: { participants: { include: { member: true } }, attendances: true },
     });
     if (!classItem) {
-      throw new NotFoundException(`Biblical School Class with ID ${id} not found`);
+      throw new NotFoundException(
+        `Biblical School Class with ID ${id} not found`,
+      );
     }
     return classItem;
   }
 
-  update(id: string, updateBiblicalSchoolClassDto: UpdateBiblicalSchoolClassDto) {
+  update(
+    id: string,
+    updateBiblicalSchoolClassDto: UpdateBiblicalSchoolClassDto,
+  ) {
     return this.prisma.biblicalSchoolClass.update({
       where: { id },
       data: updateBiblicalSchoolClassDto,
@@ -43,14 +59,23 @@ export class BiblicalSchoolService {
     });
   }
 
-  async assignParticipant(classId: string, assignParticipantDto: AssignParticipantDto) {
+  async assignParticipant(
+    classId: string,
+    assignParticipantDto: AssignParticipantDto,
+  ) {
     const { memberId, role } = assignParticipantDto;
 
-    const classItem = await this.prisma.biblicalSchoolClass.findUnique({ where: { id: classId } });
-    const member = await this.prisma.member.findUnique({ where: { id: memberId } });
+    const classItem = await this.prisma.biblicalSchoolClass.findUnique({
+      where: { id: classId },
+    });
+    const member = await this.prisma.member.findUnique({
+      where: { id: memberId },
+    });
 
     if (!classItem) {
-      throw new NotFoundException(`Biblical School Class with ID ${classId} not found`);
+      throw new NotFoundException(
+        `Biblical School Class with ID ${classId} not found`,
+      );
     }
     if (!member) {
       throw new NotFoundException(`Member with ID ${memberId} not found`);
@@ -61,7 +86,9 @@ export class BiblicalSchoolService {
     });
 
     if (existingAssignment) {
-      throw new BadRequestException(`Member ${memberId} is already assigned to class ${classId}`);
+      throw new BadRequestException(
+        `Member ${memberId} is already assigned to class ${classId}`,
+      );
     }
 
     return this.prisma.classAssignment.create({
@@ -79,7 +106,9 @@ export class BiblicalSchoolService {
     });
 
     if (!existingAssignment) {
-      throw new NotFoundException(`Member ${memberId} is not assigned to class ${classId}`);
+      throw new NotFoundException(
+        `Member ${memberId} is not assigned to class ${classId}`,
+      );
     }
 
     return this.prisma.classAssignment.delete({
@@ -87,14 +116,23 @@ export class BiblicalSchoolService {
     });
   }
 
-  async recordAttendance(classId: string, recordAttendanceDto: RecordAttendanceDto) {
+  async recordAttendance(
+    classId: string,
+    recordAttendanceDto: RecordAttendanceDto,
+  ) {
     const { memberId, date, status } = recordAttendanceDto;
 
-    const classItem = await this.prisma.biblicalSchoolClass.findUnique({ where: { id: classId } });
-    const member = await this.prisma.member.findUnique({ where: { id: memberId } });
+    const classItem = await this.prisma.biblicalSchoolClass.findUnique({
+      where: { id: classId },
+    });
+    const member = await this.prisma.member.findUnique({
+      where: { id: memberId },
+    });
 
     if (!classItem) {
-      throw new NotFoundException(`Biblical School Class with ID ${classId} not found`);
+      throw new NotFoundException(
+        `Biblical School Class with ID ${classId} not found`,
+      );
     }
     if (!member) {
       throw new NotFoundException(`Member with ID ${memberId} not found`);
@@ -102,12 +140,24 @@ export class BiblicalSchoolService {
 
     // Verifica se já existe um registro de presença para a data e membro
     const existingAttendance = await this.prisma.attendance.findUnique({
-      where: { date_studentId_classId: { date: new Date(date), studentId: memberId, classId } },
+      where: {
+        date_studentId_classId: {
+          date: new Date(date),
+          studentId: memberId,
+          classId,
+        },
+      },
     });
 
     if (existingAttendance) {
       return this.prisma.attendance.update({
-        where: { date_studentId_classId: { date: new Date(date), studentId: memberId, classId } },
+        where: {
+          date_studentId_classId: {
+            date: new Date(date),
+            studentId: memberId,
+            classId,
+          },
+        },
         data: { status },
       });
     } else {
@@ -123,9 +173,13 @@ export class BiblicalSchoolService {
   }
 
   async getAttendance(classId: string, date: string) {
-    const classItem = await this.prisma.biblicalSchoolClass.findUnique({ where: { id: classId } });
+    const classItem = await this.prisma.biblicalSchoolClass.findUnique({
+      where: { id: classId },
+    });
     if (!classItem) {
-      throw new NotFoundException(`Biblical School Class with ID ${classId} not found`);
+      throw new NotFoundException(
+        `Biblical School Class with ID ${classId} not found`,
+      );
     }
 
     return this.prisma.attendance.findMany({
@@ -137,12 +191,19 @@ export class BiblicalSchoolService {
     });
   }
 
-  async updateAttendance(attendanceId: string, updateAttendanceDto: UpdateAttendanceDto) {
+  async updateAttendance(
+    attendanceId: string,
+    updateAttendanceDto: UpdateAttendanceDto,
+  ) {
     const { status } = updateAttendanceDto;
-    const attendance = await this.prisma.attendance.findUnique({ where: { id: attendanceId } });
+    const attendance = await this.prisma.attendance.findUnique({
+      where: { id: attendanceId },
+    });
 
     if (!attendance) {
-      throw new NotFoundException(`Attendance record with ID ${attendanceId} not found`);
+      throw new NotFoundException(
+        `Attendance record with ID ${attendanceId} not found`,
+      );
     }
 
     return this.prisma.attendance.update({
@@ -151,4 +212,3 @@ export class BiblicalSchoolService {
     });
   }
 }
-

@@ -1,7 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { GroupsController } from './groups.controller';
 import { GroupsService } from './groups.service';
-import { CreateGroupDto, UpdateGroupDto, AssignMemberDto } from './dto/group.dto';
+import {
+  CreateGroupDto,
+  UpdateGroupDto,
+  AssignMemberDto,
+} from './dto/group.dto';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 
 describe('GroupsController', () => {
@@ -76,14 +80,18 @@ describe('GroupsController', () => {
 
     it('should throw NotFoundException', async () => {
       mockGroupsService.findOne.mockRejectedValueOnce(new NotFoundException());
-      await expect(controller.findOne('nonExistentId')).rejects.toThrow(NotFoundException);
+      await expect(controller.findOne('nonExistentId')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
   describe('update', () => {
     it('should update a group', async () => {
       const updateDto: UpdateGroupDto = { name: 'Updated Group' };
-      expect(await controller.update(mockGroup.id, updateDto)).toEqual(mockGroup);
+      expect(await controller.update(mockGroup.id, updateDto)).toEqual(
+        mockGroup,
+      );
       expect(service.update).toHaveBeenCalledWith(mockGroup.id, updateDto);
     });
   });
@@ -99,24 +107,38 @@ describe('GroupsController', () => {
     it('should add a member to a group', async () => {
       const assignDto: AssignMemberDto = { memberId: 'memberId1' };
       await controller.addMember(mockGroup.id, assignDto);
-      expect(service.addMember).toHaveBeenCalledWith(mockGroup.id, assignDto.memberId);
+      expect(service.addMember).toHaveBeenCalledWith(
+        mockGroup.id,
+        assignDto.memberId,
+      );
     });
 
     it('should throw BadRequestException', async () => {
-      mockGroupsService.addMember.mockRejectedValueOnce(new BadRequestException());
-      await expect(controller.addMember(mockGroup.id, { memberId: 'memberId1' })).rejects.toThrow(BadRequestException);
+      mockGroupsService.addMember.mockRejectedValueOnce(
+        new BadRequestException(),
+      );
+      await expect(
+        controller.addMember(mockGroup.id, { memberId: 'memberId1' }),
+      ).rejects.toThrow(BadRequestException);
     });
   });
 
   describe('removeMember', () => {
     it('should remove a member from a group', async () => {
       await controller.removeMember(mockGroup.id, 'memberId1');
-      expect(service.removeMember).toHaveBeenCalledWith(mockGroup.id, 'memberId1');
+      expect(service.removeMember).toHaveBeenCalledWith(
+        mockGroup.id,
+        'memberId1',
+      );
     });
 
     it('should throw NotFoundException', async () => {
-      mockGroupsService.removeMember.mockRejectedValueOnce(new NotFoundException());
-      await expect(controller.removeMember(mockGroup.id, 'memberId1')).rejects.toThrow(NotFoundException);
+      mockGroupsService.removeMember.mockRejectedValueOnce(
+        new NotFoundException(),
+      );
+      await expect(
+        controller.removeMember(mockGroup.id, 'memberId1'),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 });

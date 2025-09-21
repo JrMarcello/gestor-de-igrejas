@@ -2,13 +2,19 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
 import { ForbiddenException } from '@nestjs/common';
 import { Role } from '@prisma/client';
 
+jest.mock('bcrypt', () => ({
+  hash: jest.fn(() => Promise.resolve('hashedPassword')),
+  compare: jest.fn(() => Promise.resolve(true)),
+  genSalt: jest.fn(() => Promise.resolve('mockSalt')),
+}));
+
+import * as bcrypt from 'bcrypt';
+
 describe('AuthService', () => {
   let service: AuthService;
-  let prisma: PrismaService;
   let jwt: JwtService;
 
   const mockPrismaService = {
@@ -38,12 +44,14 @@ describe('AuthService', () => {
     }).compile();
 
     service = module.get<AuthService>(AuthService);
-    prisma = module.get<PrismaService>(PrismaService);
     jwt = module.get<JwtService>(JwtService);
 
-    // Mock bcrypt methods
-    jest.spyOn(bcrypt, 'hash').mockImplementation(() => Promise.resolve('hashedPassword'));
-    jest.spyOn(bcrypt, 'compare').mockImplementation(() => Promise.resolve(true));
+    // Reset mocks before each test
+    (bcrypt.hash as jest.Mock).mockClear();
+    (bcrypt.compare as jest.Mock).mockClear();
+    mockPrismaService.user.create.mockClear();
+    mockPrismaService.user.findUnique.mockClear();
+    mockJwtService.signAsync.mockClear();
   });
 
   it('should be defined', () => {
@@ -64,7 +72,10 @@ describe('AuthService', () => {
         password: 'password123',
       });
 
-      expect(bcrypt.hash).toHaveBeenCalledWith('password123', expect.any(String));
+      expect(bcrypt.hash).toHaveBeenCalledWith(
+        'password123',
+        expect.any(String),
+      );
       expect(mockPrismaService.user.create).toHaveBeenCalledWith({
         data: {
           email: 'test@example.com',
@@ -102,7 +113,9 @@ describe('AuthService', () => {
 
     it('should return an access token on successful signin', async () => {
       mockPrismaService.user.findUnique.mockResolvedValueOnce(mockUser);
-      jest.spyOn(bcrypt, 'compare').mockImplementation(() => Promise.resolve(true));
+      (bcrypt.compare as jest.Mock).mockImplementation(() =>
+        Promise.resolve(true),
+      );
 
       const result = await service.signin({
         email: 'test@example.com',
@@ -112,7 +125,10 @@ describe('AuthService', () => {
       expect(mockPrismaService.user.findUnique).toHaveBeenCalledWith({
         where: { email: 'test@example.com' },
       });
-      expect(bcrypt.compare).toHaveBeenCalledWith('password123', 'hashedPassword');
+      expect(bcrypt.compare).toHaveBeenCalledWith(
+        'password123',
+        'hashedPassword',
+      );
       expect(jwt.signAsync).toHaveBeenCalledWith({
         sub: 'someId',
         email: 'test@example.com',
@@ -134,7 +150,9 @@ describe('AuthService', () => {
 
     it('should throw ForbiddenException if password incorrect', async () => {
       mockPrismaService.user.findUnique.mockResolvedValueOnce(mockUser);
-      jest.spyOn(bcrypt, 'compare').mockImplementation(() => Promise.resolve(false));
+      (bcrypt.compare as jest.Mock).mockImplementation(() =>
+        Promise.resolve(false),
+      );
 
       await expect(
         service.signin({

@@ -21,4 +21,4 @@ RUN pnpm run build
 EXPOSE 3001
 
 # Comando para iniciar a aplicação
-CMD [ "pnpm", "run", "start" ]
+CMD [ "pnpm", "run", "start", "-p", "3001" ]

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateGroupDto, UpdateGroupDto } from './dto/group.dto';
 
@@ -44,8 +48,12 @@ export class GroupsService {
 
   async addMember(groupId: string, memberId: string) {
     // Verifica se o membro e o grupo existem
-    const group = await this.prisma.group.findUnique({ where: { id: groupId } });
-    const member = await this.prisma.member.findUnique({ where: { id: memberId } });
+    const group = await this.prisma.group.findUnique({
+      where: { id: groupId },
+    });
+    const member = await this.prisma.member.findUnique({
+      where: { id: memberId },
+    });
 
     if (!group) {
       throw new NotFoundException(`Group with ID ${groupId} not found`);
@@ -60,7 +68,9 @@ export class GroupsService {
     });
 
     if (existing) {
-      throw new BadRequestException(`Member ${memberId} is already in group ${groupId}`);
+      throw new BadRequestException(
+        `Member ${memberId} is already in group ${groupId}`,
+      );
     }
 
     return this.prisma.membersOnGroups.create({
@@ -77,7 +87,9 @@ export class GroupsService {
     });
 
     if (!existing) {
-      throw new NotFoundException(`Member ${memberId} not found in group ${groupId}`);
+      throw new NotFoundException(
+        `Member ${memberId} not found in group ${groupId}`,
+      );
     }
 
     return this.prisma.membersOnGroups.delete({
@@ -85,4 +97,3 @@ export class GroupsService {
     });
   }
 }
-
