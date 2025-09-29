@@ -1,126 +1,88 @@
 # Gestor de Igrejas
 
-Sistema completo para gestão de membresia de igrejas com autenticação, gerenciamento de membros, grupos/ministérios e Escola Bíblica Dominical.
+Plataforma completa para gestão de membresia de igrejas. A API fornece autenticação JWT, cadastro de membros, organização em grupos/ministérios, gerenciamento da Escola Bíblica Dominical e dashboard com indicadores. A interface web consome essa API para oferecer uma experiência administrativa moderna.
 
-## ✨ Funcionalidades
+## Tecnologias
+- **Backend:** NestJS 11, Prisma, MongoDB, JWT, Passport.js
+- **Frontend:** Next.js 14, TypeScript, Tailwind CSS, shadcn/ui, Axios
+- **DevOps:** Docker, Docker Compose, Prisma Migrate
 
-- **Autenticação JWT** - Login/registro seguro
-- **Gestão de Membros** - CRUD completo com dados pessoais
-- **Grupos e Ministérios** - Organização e associação de membros
-- **Escola Bíblica** - Turmas, participantes e controle de presença
-- **Dashboard** - Estatísticas e visão geral do sistema
-- **API Documentada** - Swagger para testes e integração
-
-## 🛠 Tecnologias
-
-**Backend:** NestJS, Prisma, MongoDB, JWT, Passport.js  
-**Frontend:** Next.js, TypeScript, Tailwind CSS, shadcn/ui, Axios  
-**DevOps:** Docker, Docker Compose
-
-## 🚀 Início Rápido
-
-### Com Docker (Recomendado)
-
-```bash
-# 1. Clone e navegue para o projeto
-cd gestor-de-igrejas
-
-# 2. Configure o backend
-cd backend && cp .env.example .env
-# Edite o .env com suas configurações
-
-# 3. Execute o projeto
-docker compose up -d
-
-# 4. Seed do banco (primeira vez)
-docker compose exec backend npx prisma db seed
+## Estrutura do Projeto
+```
+gestor-de-igrejas/
+├── backend/            # API NestJS (Prisma + MongoDB)
+├── frontend/           # Interface Next.js (App Router)
+└── docker-compose.yml  # Orquestração dos serviços em contêiner
 ```
 
-**Acesse:**
+## Pré-requisitos
+- Node.js 18 ou superior
+- pnpm (recomendado) ou npm
+- Docker e Docker Compose (opcional, para subir tudo em contêineres)
+- Instância MongoDB acessível (local ou em nuvem)
 
+## Setup do Projeto
+### 1. Clonar e entrar no repositório
+```bash
+git clone <url-do-repositorio>
+cd gestor-de-igrejas
+```
+
+### 2. Subir com Docker (opção rápida)
+```bash
+# Preparar variáveis do backend
+cd backend && cp .env.example .env
+# ajuste DATABASE_URL e JWT_SECRET conforme sua instância MongoDB
+cd ..
+
+# Construir e iniciar serviços
+docker compose up --build -d
+
+# (opcional) executar seed
+docker compose exec backend npx prisma db seed
+```
 - Frontend: <http://localhost:3001>
 - API: <http://localhost:3000>
 - Swagger: <http://localhost:3000/api>
 
-### Instalação Manual
-
-**Backend:**
-
+### 3. Rodar manualmente
+#### Backend
 ```bash
 cd backend
 pnpm install
-cp .env.example .env  # Configure DATABASE_URL e JWT_SECRET
+cp .env.example .env  # defina DATABASE_URL e JWT_SECRET
 npx prisma generate
-npx prisma db seed
+npx prisma db seed    # popula dados iniciais (opcional)
 pnpm run start:dev
 ```
 
-**Frontend:**
-
+#### Frontend
 ```bash
 cd frontend
 pnpm install
 echo 'NEXT_PUBLIC_API_URL="http://localhost:3000"' > .env.local
 pnpm run dev
 ```
+Acesse o app em <http://localhost:3001>. Credenciais padrão (seed): `admin@example.com` / `admin123`.
 
-## 📋 Uso
-
-1. **Login:** Acesse <http://localhost:3001/login>
-2. **Credenciais padrão:** `admin@example.com` / `admin123`
-3. **Navegação:** Use a barra superior para acessar os módulos
-
-## 🧪 Testes
-
+## Testes
+### Backend
 ```bash
-# Backend
 cd backend
-pnpm test              # Testes unitários
-pnpm test:cov          # Com coverage
-pnpm test:e2e          # End-to-end
-pnpm lint              # Linting
+pnpm test        # testes unitários
+pnpm test:cov    # cobertura de testes
+pnpm test:e2e    # testes end-to-end
+pnpm lint        # análise estática
+```
 
-# Frontend
+### Frontend
+```bash
 cd frontend
-pnpm test              # Testes unitários
-pnpm lint              # Linting
+pnpm lint        # verificação de código (não há testes automatizados configurados)
+```
 
-# Com Docker
+### Via Docker
+```bash
 docker compose exec backend pnpm test
-docker compose exec frontend pnpm test
-```
-
-## 📁 Estrutura
-
-```text
-gestor-de-igrejas/
-├── backend/           # API NestJS
-│   ├── src/
-│   │   ├── auth/      # Autenticação JWT
-│   │   ├── members/   # Gestão de membros
-│   │   ├── groups/    # Grupos e ministérios
-│   │   ├── biblical-school/ # Escola bíblica
-│   │   └── dashboard/ # Estatísticas
-│   └── prisma/        # Schema e seed
-├── frontend/          # Interface Next.js
-│   └── src/
-│       ├── app/       # Páginas (App Router)
-│       ├── components/ # Componentes React
-│       └── contexts/  # Estado global
-└── docker-compose.yml # Orquestração
-```
-
-## 📝 Variáveis de Ambiente
-
-**Backend (.env):**
-
-```env
-DATABASE_URL="mongodb://admin:password@mongodb:27017/gestor_db?authSource=admin"
-JWT_SECRET="sua_chave_secreta_jwt"
-```
-
-**Frontend (.env.local):**
-
-```env
-NEXT_PUBLIC_API_URL="http://localhost:3000"
+docker compose exec frontend pnpm lint
 ```
