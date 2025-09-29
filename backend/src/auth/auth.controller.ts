@@ -20,18 +20,18 @@ export class AuthController {
 
   @ApiOperation({ summary: 'Fazer login' })
   @ApiBody({ type: SignInDto })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Login realizado com sucesso',
     schema: {
       type: 'object',
       properties: {
         access_token: {
           type: 'string',
-          example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
-        }
-      }
-    }
+          example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        },
+      },
+    },
   })
   @ApiResponse({ status: 401, description: 'Credenciais inválidas' })
   @HttpCode(HttpStatus.OK)

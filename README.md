@@ -37,13 +37,15 @@ docker compose exec backend npx prisma db seed
 ```
 
 **Acesse:**
-- Frontend: http://localhost:3001
-- API: http://localhost:3000
-- Swagger: http://localhost:3000/api
+
+- Frontend: <http://localhost:3001>
+- API: <http://localhost:3000>
+- Swagger: <http://localhost:3000/api>
 
 ### Instalação Manual
 
 **Backend:**
+
 ```bash
 cd backend
 pnpm install
@@ -54,6 +56,7 @@ pnpm run start:dev
 ```
 
 **Frontend:**
+
 ```bash
 cd frontend
 pnpm install
@@ -63,7 +66,7 @@ pnpm run dev
 
 ## 📋 Uso
 
-1. **Login:** Acesse http://localhost:3001/login
+1. **Login:** Acesse <http://localhost:3001/login>
 2. **Credenciais padrão:** `admin@example.com` / `admin123`
 3. **Navegação:** Use a barra superior para acessar os módulos
 
@@ -89,7 +92,7 @@ docker compose exec frontend pnpm test
 
 ## 📁 Estrutura
 
-```
+```text
 gestor-de-igrejas/
 ├── backend/           # API NestJS
 │   ├── src/
@@ -110,12 +113,14 @@ gestor-de-igrejas/
 ## 📝 Variáveis de Ambiente
 
 **Backend (.env):**
+
 ```env
 DATABASE_URL="mongodb://admin:password@mongodb:27017/gestor_db?authSource=admin"
 JWT_SECRET="sua_chave_secreta_jwt"
 ```
 
 **Frontend (.env.local):**
+
 ```env
 NEXT_PUBLIC_API_URL="http://localhost:3000"
 ```
